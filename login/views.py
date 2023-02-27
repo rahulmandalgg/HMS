@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 import mysql.connector as sql
 # Create your views here.
 
@@ -23,13 +23,13 @@ def login(request):
             usrtype=i[0]
         if len(data)>0:
             if usrtype== 'admin':
-                return render(request,'admin.html')
+                return redirect('admin')
             elif usrtype== 'doctor':
-                return render(request,'doctor.html')
+                return redirect('doctor')
             elif usrtype== 'front desk operator':
-                return render(request,'frontdesk.html')
+                return redirect('frontdesk')
             elif usrtype== 'data operator':
-                return render(request,'dataoperator.html')
+                return redirect('dataoperator')
             else:
                 return render(request,'login.html',{'msg':'Invalid Credentials'})
         else:
