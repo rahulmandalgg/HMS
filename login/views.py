@@ -19,21 +19,25 @@ def login(request):
                 pas=value
         c.execute("select * from users where EmployeeID='"+id+"' and Password='"+pas+"'")
         data=c.fetchall()
-        for i in data:
-            usrtype=i[0]
-        if len(data)>0:
-            if usrtype== 'admin':
-                return redirect('admin')
-            elif usrtype== 'doctor':
-                return redirect('doctor')
-            elif usrtype== 'front desk operator':
-                return redirect('frontdesk')
-            elif usrtype== 'data operator':
-                return redirect('dataoperator')
+        t=tuple(data)
+        if t==():
+            return render(request,'login.html',{'msg':'Invalid Credentials'})
+        else:
+            for i in data:
+                usrtype=i[0]
+            if len(data)>0:
+                if usrtype== 'admin':
+                    return redirect('admin')
+                elif usrtype== 'doctor':
+                    return redirect('doctor')
+                elif usrtype== 'front desk operator':
+                    return redirect('frontdesk')
+                elif usrtype== 'data operator':
+                    return redirect('dataoperator')
+                else:
+                    return render(request,'login.html',{'msg':'Invalid Credentials'})
             else:
                 return render(request,'login.html',{'msg':'Invalid Credentials'})
-        else:
-            return render(request,'login.html',{'msg':'Invalid Credentials'})
     return render(request, 'login.html')
 
 def admin(request):
