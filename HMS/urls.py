@@ -25,6 +25,4 @@ urlpatterns = [
     path('frontdesk/', views.frontdesk,name='frontdesk'),
     path('dataoperator/', views.dataoperator,name='dataoperator'),
 
-
-
 ]

@@ -1,15 +1,17 @@
 from django.shortcuts import render,redirect
 import mysql.connector as sql
+from login.models import users
 # Create your views here.
 
 id=''
 pas=''
 usrtype= ''
 
+m=sql.connect(host="localhost",user="root",passwd="mandal.1234",database="hospital")
+
 def login(request):
-    global id,pas,usrtype
+    global id,pas,usrtype,m
     if request.method=="POST":
-        m=sql.connect(host="localhost",user="root",passwd="mandal.1234",database="hospital")
         c=m.cursor()
         d=request.POST
         for key,value in d.items():
@@ -41,13 +43,16 @@ def login(request):
     return render(request, 'login.html')
 
 def admin(request):
-    return render(request,'admin.html')
+    results = users.objects.all()
+    print(results)
+    result = {"staff": results}
+    return render(request,'admin.html',result)
 
 def doctor(request):
     return render(request,'doctor.html')
 
 def frontdesk(request):
-    return render(request,'frontdesk.html')
+    return render(request,'front_desk.html')
 
 def dataoperator(request):
-    return render(request,'dataoperator.html')
+    return render(request,'data_operator.html')
