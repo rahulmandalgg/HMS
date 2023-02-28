@@ -101,6 +101,11 @@ form h3{
     line-height: 42px;
     text-align: center;
 }
+p{
+    color: red;
+    font-size: 20px;
+}
+
 
 label{
     display: block;
@@ -141,17 +146,16 @@ button{
 
 </head>
 <body>
-<div>
-        {% if msg %}
-        <p align="center">{{ msg }}</p>
-        {% endif %}
-</div>
 
     {% load static %}
    <img src=''/>
 
     <form method="post">
+
         <h3>Login Here</h3>
+         {% if msg %}
+        <p align="center"  >{{ msg }}</p>
+        {% endif %}
         {% csrf_token %}
         <label for="EmployeeID">EmployeeID</label>
         <input type="text" placeholder="Enter EmployeeID" id="EmployeeID" name="EmployeeID">
