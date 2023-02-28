@@ -43,8 +43,10 @@ def login(request):
     return render(request, 'login.html')
 
 def admin(request):
-    results = users.objects.all()
-    print(results)
+    c = m.cursor()
+    c.execute("select * from users")
+    results = c.fetchall()
+    #print(results)
     result = {"staff": results}
     return render(request,'admin.html',result)
 

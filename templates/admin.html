@@ -14,6 +14,22 @@
   <body>
     <h1>ADMIN DASHBOARD</h1>
 
+         <table border="1">
+       <tr>
+           <th>Type </th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>EMPLOYEEID</th>
+        </tr>
+        {%  for dt in staff %}
+       <tr>
+           <td>{{dt.0}}</td>
+           <td>{{dt.1}}</td>
+           <td>{{dt.2}}</td>
+           <td>{{dt.3}}</td>
+       </tr>
+       {% endfor %}
+   </table>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
