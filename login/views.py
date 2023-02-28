@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 import mysql.connector as sql
-from login.models import users
+
 # Create your views here.
 
 id=''
