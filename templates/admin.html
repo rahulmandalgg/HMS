@@ -135,7 +135,9 @@
            {% endfor %}
    </table>
 <div class="container">
-    <form action="#" method="post" >
+    <form method="post" id="addform" >
+         <input type="hidden" name="form_type" value="addform">
+        {% csrf_token %}
 		<h2>Add User</h2>
 		<label for="type">Type:</label>
 		<select name="type" id="type">
@@ -171,7 +173,13 @@
 		<input type="submit" value="Add User">
 	</form>
 	<br>
-	<form action="#" method="post">
+	<form method="post" id="rform">
+     <input type="hidden" name="form_type" value="rform">
+        {% csrf_token %}
+        {% if delmsg %}
+        <p align="center"  >{{ msg }}</p>
+        {% endif %}
+
 		<h2>Remove User</h2>
 		<label for="remove-user-id">EmployeeID:</label>
 		<input type="text" name="remove-user-id" id="remove-user-id">
