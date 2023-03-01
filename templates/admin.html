@@ -10,18 +10,19 @@
     <title>Admin Panel</title>
     <style>
 
-
+        table tbody {
+            height:600px;
+            overflow-y:scroll;
+            display:block;
+        }
         table {
             width: 40%;
-          margin: 10px;
-            padding: 10px ;
-          text-align: left;
-          position: fixed;
-          border-collapse: collapse;
-          background-color: #f6f6f6;
-            overflow-y:scroll;
-           height:500px;
-           display:block;
+            text-align: left;
+            position: fixed;
+            border-collapse: collapse;
+            background-color: #f6f6f6;
+
+
         }/* Spacing */
         td, th {
           border: 1px solid #999;
@@ -139,6 +140,7 @@
         {% endfor %}
     </ul>
     {% endif %}
+
     <table border="1" align="left">
         <thead><tr>
             <th colspan="4">Users </th>
