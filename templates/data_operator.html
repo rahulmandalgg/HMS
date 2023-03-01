@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>Data Operator Dashboard</title>
+	<title>Test and Result Input Form</title>
 	<style type="text/css">
 		body {
 			font-family: Arial, sans-serif;
@@ -20,7 +20,6 @@
 			display: block;
 			margin-bottom: 5px;
 			font-weight: bold;
-
 		}
 		.input {
 			padding: 5px;
@@ -51,41 +50,110 @@
 			cursor: pointer;
 			font-size: 14px;
 		}
+		.patient-info {
+			display: none;
+			padding: 10px;
+			border: 1px solid #ccc;
+			border-radius: 3px;
+			margin-top: 10px;
+		}
+		.patient-info h2 {
+			margin-top: 0;
+		}
 	</style>
+	<script type="text/javascript">
+		function showPatientInfo() {
+			var select = document.getElementById("test-select");
+			var patientInfo = document.getElementById("patient-info");
+			var patientName = document.getElementById("patient-name");
+			var patientAge = document.getElementById("patient-age");
+			var patientGender = document.getElementById("patient-gender");
+			var selectedTest = select.options[select.selectedIndex].value;
+			if (selectedTest === "") {
+				patientInfo.style.display = "none";
+			} else {
+				patientInfo.style.display = "block";
+				// Dummy data for demonstration purposes only
+				if (selectedTest === "test1") {
+					patientName.innerHTML = "John Smith";
+					patientAge.innerHTML = "32";
+					patientGender.innerHTML = "Male";
+				} else if (selectedTest === "test2") {
+					patientName.innerHTML = "Jane Doe";
+					patientAge.innerHTML = "45";
+					patientGender.innerHTML = "Female";
+				} else if (selectedTest === "test3") {
+					patientName.innerHTML = "Bob Johnson";
+					patientAge.innerHTML = "57";
+					patientGender.innerHTML = "Male";
+				}
+			}
+		}
+	</script>
+    <script type="text/javascript">
+		function showTreatmentForm() {
+			var select = document.getElementById("patient-select");
+			var treatmentForm = document.getElementById("treatment-form");
+			if (select.options[select.selectedIndex].value === "") {
+				treatmentForm.style.display = "none";
+			} else {
+				treatmentForm.style.display = "block";
+			}
+		}
+	</script>
 </head>
 <body>
 	<div class="container">
-		<h1>Data Operator Dashboard</h1>
+		<h1>Test and Result Input Form</h1>
 		<form>
+			<div class="form-group">
+				<label for="test-select" class="label">Select Test:</label>
+<select id="test-select" onchange="showPatientInfo()" class="select">
+<option value="">--Select Test--</option>
+<option value="test1">Test 1</option>
+<option value="test2">Test 2</option>
+<option value="test3">Test 3</option>
+</select>
+</div>
+<div id="patient-info" class="patient-info">
+<h2>Patient Information</h2>
+<p><strong>Name:</strong> <span id="patient-name"></span></p>
+<p><strong>Age:</strong> <span id="patient-age"></span></p>
+<p><strong>Gender:</strong> <span id="patient-gender"></span></p>
+</div>
+<div class="form-group">
+<label for="result-input" class="label">Input Test Result:</label>
+<input type="text" id="result-input" class="input" placeholder="Enter test result...">
+</div>
+<div class="form-group attachment">
+<label for="attachment-input" class="label">Attach Image:</label>
+<input type="file" id="attachment-input">
+</div>
+<button type="submit" class="button">Submit</button>
+</form>
+</div>
 
+<div class="container">
+		<h1>Patient Treatment Input Form</h1>
+		<form>
 			<div class="form-group">
-                <label for="patient">Patient:</label>
-            <select id="patient" name="patient">
-            <option value="1">John Doe</option>
-            <option value="2">Jane Smith</option>
-            </select>
-				<label class="label" for="test-select">Select Test:</label>
-				<select class="select" id="test-select">
-					<option value="">-- Select Test --</option>
-					<option value="test1">Test 1</option>
-					<option value="test2">Test 2</option>
-					<option value="test3">Test 3</option>
-				</select>
-			</div>
+				<label for="patient-select" class="label">Select Patient:</label>
+                <select id="patient-select" onchange="showTreatmentForm()" class="select">
+				<option value="">--Select Patient--</option>
+				<option value="patient1">Patient 1</option>
+				<option value="patient2">Patient 2</option>
+				<option value="patient3">Patient 3</option>
+			</select>
+		</div>
+		<div id="treatment-form" style="display: none;">
+			<h2>Treatment Information for <span id="selected-patient"></span></h2>
 			<div class="form-group">
-				<label class="label" for="test-result">Test Result:</label>
-				<input class="input" type="text" id="test-result" name="test-result">
+				<label for="treatment-input" class="label">Input Treatment:</label>
+				<textarea id="treatment-input" class="input" placeholder="Enter treatment..."></textarea>
 			</div>
-			<div class="form-group attachment">
-				<label class="label" for="test-attachment">Test Attachment:</label>
-				<input class="input" type="file" id="test-attachment" name="test-attachment">
-			</div>
-			<div class="form-group">
-				<label class="label" for="treatment-input">Treatment Given:</label>
-				<textarea class="input" id="treatment-input" name="treatment-input"></textarea>
-			</div>
-			<button class="button" type="submit">Submit</button>
-		</form>
-	</div>
+			<button type="submit" class="button">Submit</button>
+		</div>
+	</form>
+</div>
 </body>
 </html>
