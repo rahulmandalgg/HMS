@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render,redirect
 import mysql.connector as sql
 from django.views.decorators.csrf import csrf_protect
@@ -12,6 +13,7 @@ usrtype= ''
 
 m=sql.connect(host="localhost",user="root",passwd="mandal.1234",database="hospital")
 c=m.cursor()
+
 def login(request):
     global id,pas,usrtype,m,c
     if request.method=="POST":
@@ -43,6 +45,7 @@ def login(request):
             else:
                 return render(request,'login.html',{'msg':'Invalid Credentials'})
     return render(request, 'login.html')
+
 
 @csrf_protect
 def admin(request):

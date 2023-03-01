@@ -70,6 +70,8 @@ TEMPLATES = [
     },
 ]
 
+
+
 WSGI_APPLICATION = 'HMS.wsgi.application'
 
 
