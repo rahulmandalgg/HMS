@@ -1,5 +1,6 @@
 from django.shortcuts import render,redirect
 import mysql.connector as sql
+from HMS.settings import DATABASES
 
 # Create your views here.
 
@@ -43,6 +44,8 @@ def login(request):
     return render(request, 'login.html')
 
 def admin(request):
+
+
     c = m.cursor()
     c.execute("select * from users")
     results = c.fetchall()
