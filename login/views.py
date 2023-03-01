@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 import mysql.connector as sql
 from django.views.decorators.csrf import csrf_protect
+from django.contrib import messages
 
 
 # Create your views here.
@@ -55,16 +56,24 @@ def admin(request):
 
     if request.method == 'POST' and request.POST.get("form_type") == 'rform':
         remove_id = request.POST.get("remove-user-id")
+        if remove_id == '':
+            messages.error(request, 'Please fill all the fields!')
+            return redirect('admin')
         c.execute("delete from users where EmployeeID='"+remove_id+"'")
         m.commit()
-        return render(request,'admin.html', {'delmsg': 'User Deleted Successfully'})
+        messages.success(request, 'User removed successfully!')
+        return redirect('admin')
 
-    if request.method == 'POST' and request.POST.get("form_type") == 'addform':
+    elif request.method == 'POST' and request.POST.get("form_type") == 'addform':
         user_type = request.POST.get("type")
         first_name = request.POST.get("first-name")
         last_name = request.POST.get("last-name")
         employee_id = request.POST.get("employee-id")
         password = request.POST.get("password")
+
+        if employee_id == '' or password == '' or first_name == '' or last_name == '' or user_type == '':
+            messages.error(request, 'Please fill all the fields!')
+            return redirect('admin')
 
         if user_type == 'doctor':
             specialization = request.POST.get("specialization")
@@ -72,8 +81,10 @@ def admin(request):
             cert_expiry_date = request.POST.get("certificate-expiry-date")
             add_user_to_database(user_type, first_name, last_name, employee_id, password, specialization, cert_given_date,
                                  cert_expiry_date)
+            return redirect('admin')
         else:
             add_user_to_database(user_type, first_name, last_name, employee_id, password)
+            return redirect('admin')
 
     return render(request,'admin.html',result)
 

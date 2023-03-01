@@ -10,6 +10,7 @@
     <title>Admin Panel</title>
     <style>
 
+
         table {
             width: 40%;
           margin: 10px;
@@ -18,10 +19,20 @@
           position: fixed;
           border-collapse: collapse;
           background-color: #f6f6f6;
+            overflow-y:scroll;
+           height:500px;
+           display:block;
         }/* Spacing */
         td, th {
           border: 1px solid #999;
           padding: 20px;
+        }
+        ul.messages {
+            color: red;
+            text-align: center;
+            list-style: none;
+            margin: 0;
+            padding: 0;
         }
         th {
           background: royalblue;
@@ -49,6 +60,12 @@
 			padding: 20px;
 			text-align: center;
 		}
+        button{
+            size: 5px;
+            border-radius: 10px;
+            background-color: red;
+            float: right;
+        }
         .container {
             margin-right: 20px;
 			display: flex;
@@ -113,8 +130,15 @@
   </head>
 
   <body>
-    <h1>ADMIN DASHBOARD</h1>
-
+    <h1>ADMIN DASHBOARD <button id="logout-btn">Logout</button>
+    </h1>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
     <table border="1" align="left">
         <thead><tr>
             <th colspan="4">Users </th>
@@ -136,6 +160,7 @@
    </table>
 <div class="container">
     <form method="post" id="addform" >
+
          <input type="hidden" name="form_type" value="addform">
         {% csrf_token %}
 		<h2>Add User</h2>
@@ -174,6 +199,7 @@
 	</form>
 	<br>
 	<form method="post" id="rform">
+
      <input type="hidden" name="form_type" value="rform">
         {% csrf_token %}
         {% if delmsg %}
@@ -198,6 +224,13 @@
 			}
 		});
 	</script>
+    <script>
+        $(document).ready(function() {
+          $('#logout-btn').click(function() {
+            window.location.href = 'login.html';
+          });
+        });
+    </script>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
