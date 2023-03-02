@@ -15,7 +15,7 @@ id=''
 pas=''
 usrtype= ''
 
-m=sql.connect(host="localhost",user="root",passwd="mandal.1234",database="hospital")
+m=sql.connect(host="localhost",user="root",passwd="",database="hospital")
 c=m.cursor()
 
 def login(request):
