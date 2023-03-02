@@ -11,7 +11,7 @@ id=''
 pas=''
 usrtype= ''
 
-m=sql.connect(host="localhost",user="root",passwd="mandal.1234",database="hospital")
+m=sql.connect(host="localhost",user="root",passwd="",database="hospital")
 c=m.cursor()
 
 def login(request):
@@ -95,6 +95,25 @@ def doctor(request):
     return render(request,'doctor.html')
 
 def frontdesk(request):
+
+    if request.method == 'POST' and request.POST.get("form_type") == 'regpat':
+
+        patSSN = request.POST.get("SSNID")
+        pfName = request.POST.get("f_name")
+        plName = request.POST.get("l_name")
+        pDOB = request.POST.get("dob")\
+
+        if patSSN == '' or pfName == '' or plName == '' or pDOB == '':
+            messages.error(request, 'Please fill all the fields!')
+            return redirect('frontdesk')
+
+        else:
+            #print(patSSN, pfName, plName, pDOB)
+            c.execute("insert into patient values('"+patSSN+"','"+pfName+"','"+plName+"','"+pDOB+"')")
+            m.commit()
+            messages.success(request, 'Patient registered successfully!')
+            return redirect('frontdesk')
+
     return render(request,'front_desk.html')
 
 def dataoperator(request):

@@ -105,10 +105,18 @@
 </head>
 <body>
 	<h1>Front Desk Operator Dashboard</h1>
-
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
 	<div id="register">
 		<h2>Register Patient</h2>
-		<form>
+		<form method="post" id="regpat">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="regpat">
 			<label for="first_name">First Name:</label>
 			<input type="text" id="f_name" name="f_name">
             <label for="last_name">Last Name:</label>
@@ -129,11 +137,18 @@
 
 <div id="admit">
 	<h2>Admit Patient</h2>
+    <form>
 	<select id="patient" name="patient">
 			<option value="1">John Doe</option>
 			<option value="2">Jane Smith</option>
 		</select>
-    <button type="submit">Admit</button>
+    <label for="room">Room:</label>
+    <select id="room" name="room">
+            <!--display room with capacity -->
+
+    </select>
+        <button type="submit">Admit</button>
+    </form>
 </div>
 
 <div id="discharge">
