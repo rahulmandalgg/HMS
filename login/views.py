@@ -1,8 +1,12 @@
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseNotFound, HttpResponse
 from django.shortcuts import render,redirect
 import mysql.connector as sql
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
+import base64
+from PIL import Image
+import io
 
 
 # Create your views here.
@@ -11,7 +15,7 @@ id=''
 pas=''
 usrtype= ''
 
-m=sql.connect(host="localhost",user="root",passwd="",database="hospital")
+m=sql.connect(host="localhost",user="root",passwd="mandal.1234",database="hospital")
 c=m.cursor()
 
 def login(request):
@@ -32,6 +36,7 @@ def login(request):
             for i in data:
                 usrtype=i[0]
             if len(data)>0:
+                request.session['id'] = id
                 if usrtype== 'admin':
                     return redirect('admin')
                 elif usrtype== 'doctor':
@@ -54,8 +59,6 @@ def admin(request):
     c.execute("select * from users")
     results = c.fetchall()
     result = {"staff": results}
-
-
 
     if request.method == 'POST' and request.POST.get("form_type") == 'rform':
         remove_id = request.POST.get("remove-user-id")
@@ -92,10 +95,22 @@ def admin(request):
     return render(request,'admin.html',result)
 
 def doctor(request):
-    return render(request,'doctor.html')
+
+    docid = request.session['id']
+    querypend = "select patient.SSN,patient.First_Name,patient.Last_Name,appointment.AppointmentDT from patient inner join appointment on patient.SSN=appointment.PatientID where appointment.DoctorID="+docid+" and appointment.AppointmentDT > now();"
+    c.execute(querypend)
+    patlist = c.fetchall()
+
+    query="select patient.SSN,patient.First_Name,patient.Last_Name,prescription.TreatmentPres from patient inner join appointment on patient.SSN=appointment.PatientID and appointment.DoctorID="+docid+" left join prescription on patient.SSN = prescription.PatientID;"
+    c.execute(query)
+    patlist1 = c.fetchall()
+
+    result = {"pendpatient": patlist, "allpatient": patlist1}
+
+    return render(request,'doctor.html', result)
+
 
 def frontdesk(request):
-    c = m.cursor()
     c.execute("select * from patient inner join admit on patient.SSN=admit.PatientID where admit.Admit_Status=false")
     patlist = c.fetchall()
 
@@ -118,14 +133,14 @@ def frontdesk(request):
         patSSN = request.POST.get("SSNID")
         pfName = request.POST.get("f_name")
         plName = request.POST.get("l_name")
-        pDOB = request.POST.get("dob")\
+        pDOB = request.POST.get("dob")
+        pgender = request.POST.get("gender")
 
-        if patSSN == '' or pfName == '' or plName == '' or pDOB == '':
+        if patSSN == '' or pfName == '' or plName == '' or pDOB == '' or pgender == '':
             messages.error(request, 'Please fill all the fields!')
             return redirect('frontdesk')
         else:
-            c.execute("insert into patient values('"+patSSN+"','"+pfName+"','"+plName+"','"+pDOB+"')")
-
+            c.execute("insert into patient values('"+patSSN+"','"+pfName+"','"+plName+"','"+pDOB+"','"+pgender+"')")
             m.commit()
             messages.success(request, 'Patient registered successfully!')
             return redirect('frontdesk')
@@ -191,6 +206,7 @@ def frontdesk(request):
             return redirect('frontdesk')
 
     elif request.method == 'POST' and request.POST.get("form_type") == 'testform':
+        testid = str(request.POST.get("testid"))
         patid = str(request.POST.get("patient"))
         testnd = str(request.POST.get("test"))
         testdate = str(request.POST.get("date"))
@@ -203,8 +219,8 @@ def frontdesk(request):
             return redirect('frontdesk')
 
         else:
-            query = """INSERT INTO tests (PatientID, TestDT, TestDesc) VALUES (%s, %s, %s)"""
-            values = (patid, testdt, testnd)
+            query = """INSERT INTO tests (TestID,PatientID, TestDT, TestDesc) VALUES (%s,%s, %s, %s)"""
+            values = (testid,patid, testdt, testnd)
             c.execute(query, values)
             m.commit()
             messages.success(request, 'Test booked successfully!')
@@ -213,11 +229,56 @@ def frontdesk(request):
     return render(request,'front_desk.html', result);
 
 def dataoperator(request):
+    c.execute("select * from tests")
+    testlist = c.fetchall()
+
+    c.execute("select * from patient")
+    patlist = c.fetchall()
+
+    c.execute("select users.EmployeeID,users.First_Name,users.Last_Name,users.Specialization from users where users.type='doctor'")
+    doclist = c.fetchall()
+
+
+    result = {'tstlist': testlist, "patient": patlist, "doctor": doclist}
+
+    if request.method == 'POST' and request.POST.get("form_type") == 'testform':
+        testid = str(request.POST.get("test-select"))
+        testres= str(request.POST.get("result-input"))
+        imgfile = request.FILES.get("attachment-input")
+
+        if testid == '' or testres == '' or imgfile == '':
+            messages.error(request, 'Please fill all the fields!')
+            return redirect('dataoperator')
+
+        else:
+            query = "UPDATE tests SET ResultDesc = %s, Attachments = %s WHERE TestID = %s"
+            values = (testres, imgfile.read() , testid)
+            c.execute(query, values)
+            m.commit()
+            messages.success(request, 'Test Results Updated!!!')
+            return redirect('dataoperator')
+
+    elif request.method == 'POST' and request.POST.get("form_type") == 'treatform':
+        patid = str(request.POST.get("patient-select"))
+        docid = str(request.POST.get("doctor-select"))
+        treamnt = str(request.POST.get("treatment-input"))
+        #print(patid,docid,treamnt)
+
+        if patid == '' or docid == '' or treamnt == '':
+            messages.error(request, 'Please fill all the fields!')
+            return redirect('dataoperator')
+
+        else:
+            query = """INSERT INTO prescription (PatientID, DoctorID, TreatmentPres) VALUES (%s, %s, %s)"""
+            values = (patid, docid, treamnt)
+            c.execute(query, values)
+            m.commit()
+            messages.success(request, 'Treatment Prescribed!!!')
+
+    return render(request,'data_operator.html', result);
 
 
 
-
-    return render(request,'data_operator.html')
 
 def add_user_to_database(user_type, first_name, last_name, employee_id, password,specialization=None, cert_given_date=None, cert_expiry_date=None):
     # Define the MySQL query
