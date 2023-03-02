@@ -95,6 +95,23 @@ def doctor(request):
     return render(request,'doctor.html')
 
 def frontdesk(request):
+    c = m.cursor()
+    c.execute("select * from patient inner join admit on patient.SSN=admit.PatientID where admit.Admit_Status=false")
+    patlist = c.fetchall()
+
+    c.execute("select * from room")
+    roomlist = c.fetchall()
+
+    c.execute("select * from patient")
+    allpatlist = c.fetchall()
+
+    c.execute("select patient.SSN,patient.First_Name,patient.Last_Name from patient inner join admit on patient.SSN=admit.PatientID where admit.Admit_Status=true")
+    dispatlist = c.fetchall()
+
+    c.execute(" select users.EmployeeID,users.First_Name,users.Last_Name,users.Specialization from users where users.type='doctor';")
+    doclist = c.fetchall()
+
+    result = {"patient": patlist, "room": roomlist, "dispat": dispatlist, "doc": doclist, "allpat": allpatlist}
 
     if request.method == 'POST' and request.POST.get("form_type") == 'regpat':
 
@@ -106,17 +123,100 @@ def frontdesk(request):
         if patSSN == '' or pfName == '' or plName == '' or pDOB == '':
             messages.error(request, 'Please fill all the fields!')
             return redirect('frontdesk')
-
         else:
-            #print(patSSN, pfName, plName, pDOB)
             c.execute("insert into patient values('"+patSSN+"','"+pfName+"','"+plName+"','"+pDOB+"')")
+
             m.commit()
             messages.success(request, 'Patient registered successfully!')
             return redirect('frontdesk')
 
-    return render(request,'front_desk.html')
+    elif request.method == 'POST' and request.POST.get("form_type") == 'admitpat':
+        patid= request.POST.get("patient")
+        roomid = request.POST.get("room")
+
+        if patid == '' or roomid == '':
+            messages.error(request, 'Please fill all the fields!')
+            return redirect('frontdesk')
+
+        else:
+            c.execute("select * from admit where PatientID='"+patid+"'")
+            data = c.fetchall()
+            if data:
+                c.execute("update admit set Admit_Status=true where admit.PatientID= "+patid)
+                c.execute("update room set Current_Capacity=Current_Capacity-1 where RoomID='" + roomid + "' and Current_Capacity>=0")
+                m.commit()
+                messages.success(request, 'Patient admitted successfully!')
+            else:
+                c.execute("insert into admit values('" + patid + "','" + roomid + "',True)")
+                c.execute("update room set Current_Capacity=Current_Capacity-1 where RoomID='"+roomid+"' and Current_Capacity>=0")
+                m.commit()
+                messages.success(request, 'Patient admitted successfully!')
+            return redirect('frontdesk')
+
+    elif request.method == 'POST' and request.POST.get("form_type") == 'dispat':
+        patid= str(request.POST.get("patient"))
+        c.execute("select room.RoomID from room inner join admit on room.RoomID=admit.RoomID where admit.PatientID="+patid+";")
+        roomid = c.fetchall()
+        rid = str(roomid[0][0])
+
+        if patid == '' or roomid == '':
+            messages.error(request, 'Please fill all the fields!')
+            return redirect('frontdesk')
+
+        else:
+            c.execute("update admit set Admit_Status=False where PatientID="+patid+" and RoomID="+rid+";")
+            c.execute("update room set Current_Capacity=Current_Capacity+1 where RoomID="+rid+";")
+            m.commit()
+            messages.success(request, 'Patient discharged successfully!')
+            return redirect('frontdesk')
+
+    elif request.method == 'POST' and request.POST.get("form_type") == 'appoform':
+        patid= str(request.POST.get("patient"))
+        docid = str(request.POST.get("doctor"))
+        appodate = str(request.POST.get("date"))
+        appotime = str(request.POST.get("time"))
+
+        appodt= appodate + " " + appotime
+
+        print(patid,docid,appodt)
+
+        if patid == '' or docid == '' or appodt == '' :
+            messages.error(request, 'Please fill all the fields!')
+            return redirect('frontdesk')
+
+        else:
+            c.execute("insert into appointment values('"+patid+"','"+docid+"','"+appodt+"')")
+            m.commit()
+            messages.success(request, 'Appointment booked successfully!')
+            return redirect('frontdesk')
+
+    elif request.method == 'POST' and request.POST.get("form_type") == 'testform':
+        patid = str(request.POST.get("patient"))
+        testnd = str(request.POST.get("test"))
+        testdate = str(request.POST.get("date"))
+        testtime = str(request.POST.get("time"))
+
+        testdt = testdate + " " + testtime
+
+        if patid == '' or testnd == '' or testdt == '':
+            messages.error(request, 'Please fill all the fields!')
+            return redirect('frontdesk')
+
+        else:
+            query = """INSERT INTO tests (PatientID, TestDT, TestDesc) VALUES (%s, %s, %s)"""
+            values = (patid, testdt, testnd)
+            c.execute(query, values)
+            m.commit()
+            messages.success(request, 'Test booked successfully!')
+            return redirect('frontdesk')
+
+    return render(request,'front_desk.html', result);
 
 def dataoperator(request):
+
+
+
+
     return render(request,'data_operator.html')
 
 def add_user_to_database(user_type, first_name, last_name, employee_id, password,specialization=None, cert_given_date=None, cert_expiry_date=None):

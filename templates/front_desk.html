@@ -71,6 +71,9 @@
       #discharge select,
       #appointments select,
       #tests select,
+      #tests input[type="text"],
+      #tests input[type="date"],
+      #tests input[type="time"],
       #register input[type="date"],
       #appointments input[type="date"],
       #appointments input[type="time"] {
@@ -137,14 +140,20 @@
 
 <div id="admit">
 	<h2>Admit Patient</h2>
-    <form>
-	<select id="patient" name="patient">
-			<option value="1">John Doe</option>
-			<option value="2">Jane Smith</option>
+    <form method="post" id="admitpat">
+        {% csrf_token %}
+        <input type="hidden" name="form_type" value="admitpat">
+	    <select id="patient" name="patient">
+            {%  for dt in patient %}
+                <option value="{{dt.0}}">{{dt.0}} - {{dt.1}} {{dt.2}}</option>
+           {% endfor %}
+
 		</select>
     <label for="room">Room:</label>
     <select id="room" name="room">
-            <!--display room with capacity -->
+            {%  for dt in room %}
+                <option value="{{dt.0}}" >Room ID: {{dt.0}}, Current Capacity:{{dt.2}}</option>
+           {% endfor %}
 
     </select>
         <button type="submit">Admit</button>
@@ -153,46 +162,58 @@
 
 <div id="discharge">
 	<h2>Discharge Patient</h2>
+    <form method="post" id="dispat">
+        {% csrf_token %}
+        <input type="hidden" name="form_type" value="dispat">
 	<select id="patient" name="patient">
-			<option value="1">John Doe</option>
-			<option value="2">Jane Smith</option>
+         {%  for dt in dispat %}
+                <option value="{{dt.0}}" >{{dt.0}}- {{dt.1}} {{dt.2}}</option>
+           {% endfor %}
 		</select>
     <button type="submit">Discharge</button>
+    </form>
 </div>
 
 <div id="appointments">
 	<h2>Schedule Appointment</h2>
-	<form>
+	<form method="post" id="appoform">
+        {% csrf_token %}
+        <input type="hidden" name="form_type" value="appoform">
 		<label for="doctor">Doctor:</label>
 		<select id="doctor" name="doctor">
-			<option value="1">Dr. John Smith</option>
-			<option value="2">Dr. Jane Doe</option>
+			 {%  for dt in doc %}
+                <option value="{{dt.0}}" >{{dt.1}} {{dt.2}} - {{dt.3}}</option>
+           {% endfor %}
 		</select>
 		<label for="date">Date:</label>
 		<input type="date" id="date" name="date">
-<label for="time">Time:</label>
-<input type="time" id="time" name="time">
-<label for="patient">Patient:</label>
-<select id="patient" name="patient">
-<option value="1">John Doe</option>
-<option value="2">Jane Smith</option>
+        <label for="time">Time:</label>
+        <input type="time" id="time" name="time">
+        <label for="patient">Patient:</label>
+        <select id="patient" name="patient">
+        {%  for dt in allpat %}
+            <option value="{{dt.0}}" >{{dt.0}} - {{dt.1}} {{dt.2}}</option>
+        {% endfor %}
 </select>
 <button type="submit">Schedule Appointment</button>
 </form>
 </div>
 <div id="tests">
 	<h2>Schedule Test</h2>
-	<form>
-		<label for="test">Test Name:</label>
-		<input type="text" id="test" name="test">
+	<form method="post" id="testform">
+        {% csrf_token %}
+        <input type="hidden" name="form_type" value="testform">
+		<label for="test">Test Name and Description:</label>
+		<input type="text" id="test" name="test" height="50px" >
 		<label for="date">Date:</label>
 		<input type="date" id="date" name="date">
 		<label for="time">Time:</label>
 		<input type="time" id="time" name="time">
 		<label for="patient">Patient:</label>
 		<select id="patient" name="patient">
-			<option value="1">John Doe</option>
-			<option value="2">Jane Smith</option>
+			{%  for dt in allpat %}
+            <option value="{{dt.0}}" >{{dt.0}} - {{dt.1}} {{dt.2}}</option>
+        {% endfor %}
 		</select>
 		<button type="submit">Schedule Test</button>
 	</form>
