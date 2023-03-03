@@ -114,6 +114,27 @@ def doctor(request):
         testquery = "select * from tests where tests.PatientID="+patSSN+";"
         c.execute(testquery)
         pattest = c.fetchall()
+
+        attach = "select tests.Attachments from tests where tests.PatientID="+patSSN+";"
+        c.execute(attach)
+        attachlist = c.fetchall()
+        # encode all attachments
+        #print(len(attachlist))
+        imgbs64 = [None] * len(attachlist)
+        for i in range(len(attachlist)):
+            if attachlist[i][0] is not None:
+                imgbs64[i] = base64.b64encode(attachlist[i][0]).decode('utf-8')
+
+        context = [None] * len(attachlist)
+        k=0
+        for ida in imgbs64:
+            if i is not None:
+                context[k] = f'data:image/png;base64,{ida}'
+            else:
+                context[k] = None
+            k=k+1
+
+
         if patSSN == '':
             messages.error(request, 'Please fill Patient ID!')
             return redirect('doctor')
@@ -128,11 +149,11 @@ def doctor(request):
             patpres = c.fetchall()
 
             if patpres == []:
-                result = {"pendpatient": patlist, "allpatient": patlist1, "patinfo": patinfo, "patpres": ["No Prescription Found"], "pattest": pattest}
+                result = {"pendpatient": patlist, "allpatient": patlist1, "patinfo": patinfo, "patpres": ["No Prescription Found"], "pattest": pattest, "context": context}
                 return render(request, 'doctor.html', result)
 
             else:
-                result = {"pendpatient": patlist, "allpatient": patlist1, "patinfo": patinfo, "patpres": patpres, "pattest": pattest}
+                result = {"pendpatient": patlist, "allpatient": patlist1, "patinfo": patinfo, "patpres": patpres, "pattest": pattest, "context": context}
                 return render(request, 'doctor.html', result)
 
     result = {"pendpatient": patlist, "allpatient": patlist1, "patinfo": patinfo}

@@ -115,12 +115,12 @@
         <table>
             {%  for dt in patinfo %}
            <tr>
-               <td colspan="4" align="center" bgcolor="royalblue">{{dt.0}} - {{dt.1}} {{dt.2}}</td>
+               <td colspan="5" align="center" bgcolor="royalblue">{{dt.0}} - {{dt.1}} {{dt.2}}</td>
            </tr>
            {% endfor %}
         {%  for dt in patpres %}
            <tr>
-               <td colspan="4" align="center" > Prescription: {{dt.2}} </td>
+               <td colspan="5" align="center" > Prescription: {{dt.2}} </td>
            </tr>
 
            {% endfor %}
@@ -129,6 +129,7 @@
                 <td > Test Date and Time </td>
                 <td > Test Description </td>
                 <td > Test Result </td>
+                <td > Attachments </td>
            </tr>
 
         {%  for dt in pattest %}
@@ -137,7 +138,15 @@
                 <td > {{dt.2}} </td>
                 <td > {{dt.3}} </td>
                 <td > {{dt.4}} </td>
+                <td>
+                {% for image in context %}
+                  {% if forloop.counter0 == forloop.parentloop.counter0 %}
+                    <img height="150px" width="200px" href="{{ image }}" src="{{ image }}">
+                  {% endif %}
+                {% endfor %}
+              </td>
            </tr>
+
            {% endfor %}
         </table>
 </div>
