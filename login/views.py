@@ -193,6 +193,10 @@ def frontdesk(request):
         else:
             c.execute("insert into patient values('"+patSSN+"','"+pfName+"','"+plName+"','"+pDOB+"','"+pgender+"')")
             m.commit()
+            query = """INSERT INTO admit (PatientID, Admit_Status) VALUES (%s,%s)"""
+            values = (patSSN, False)
+            c.execute(query, values)
+            m.commit()
             messages.success(request, 'Patient registered successfully!')
             return redirect('frontdesk')
 
@@ -208,6 +212,7 @@ def frontdesk(request):
             c.execute("select * from admit where PatientID='"+patid+"'")
             data = c.fetchall()
             if data:
+                c.execute("update admit set RoomID='"+roomid+"' where admit.PatientID= "+patid)
                 c.execute("update admit set Admit_Status=true where admit.PatientID= "+patid)
                 c.execute("update room set Current_Capacity=Current_Capacity-1 where RoomID='" + roomid + "' and Current_Capacity>=0")
                 m.commit()
@@ -223,13 +228,13 @@ def frontdesk(request):
         patid= str(request.POST.get("patient"))
         c.execute("select room.RoomID from room inner join admit on room.RoomID=admit.RoomID where admit.PatientID="+patid+";")
         roomid = c.fetchall()
-        rid = str(roomid[0][0])
 
         if patid == '' or roomid == '':
             messages.error(request, 'Please fill all the fields!')
             return redirect('frontdesk')
 
         else:
+            rid = str(roomid[0][0])
             c.execute("update admit set Admit_Status=False where PatientID="+patid+" and RoomID="+rid+";")
             c.execute("update room set Current_Capacity=Current_Capacity+1 where RoomID="+rid+";")
             m.commit()
