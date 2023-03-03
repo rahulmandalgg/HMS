@@ -1,17 +1,25 @@
 <!DOCTYPE html>
 <html>
+
+<style>
+
+
+</style>
+
 <head>
     <title>View Image</title>
 </head>
 <body>
     <h1>View Image</h1>
 
-    {% if error_message %}
-        <p>{{ error_message }}</p>
-    {% endif %}
+    <a download="img.jpg" href="{{ image_data }}" title="img">
+    <img height="200px" width="500px" href="{{ image_data }}" src="{{ image_data }}">
+    </a>
+</div>
 
-    {% if image_data %}
-        <img src="data:image/jpeg;base64,{{ image_data }}" alt="Image">
-    {% endif %}
+<script>
+
+</script>
+
 </body>
 </html>

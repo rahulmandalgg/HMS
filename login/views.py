@@ -10,7 +10,6 @@ import io
 
 
 # Create your views here.
-
 id=''
 pas=''
 usrtype= ''
@@ -101,11 +100,42 @@ def doctor(request):
     c.execute(querypend)
     patlist = c.fetchall()
 
-    query="select patient.SSN,patient.First_Name,patient.Last_Name,prescription.TreatmentPres from patient inner join appointment on patient.SSN=appointment.PatientID and appointment.DoctorID="+docid+" left join prescription on patient.SSN = prescription.PatientID;"
+    query="select patient.SSN,patient.First_Name,patient.Last_Name,prescription.TreatmentPres from patient inner join prescription on prescription.DoctorID="+docid+" and patient.SSN=prescription.PatientID;"
     c.execute(query)
     patlist1 = c.fetchall()
 
-    result = {"pendpatient": patlist, "allpatient": patlist1}
+    patinfo = []
+
+    if request.method == 'POST' and request.POST.get("form_type") == 'info':
+        patSSN = request.POST.get("patient-id")
+        if patSSN == '':
+            messages.error(request, 'Please fill Patient ID!')
+            return redirect('doctor')
+        testquery = "select * from tests where tests.PatientID="+patSSN+";"
+        c.execute(testquery)
+        pattest = c.fetchall()
+        if patSSN == '':
+            messages.error(request, 'Please fill Patient ID!')
+            return redirect('doctor')
+        c.execute("select * from patient where SSN='"+patSSN+"'")
+        patinfo = c.fetchall()
+
+        if patinfo == []:
+            result = {"pendpatient": patlist, "allpatient": patlist1, "patinfo": ["Patient Not Found"], "patpres": []}
+            return redirect(request,'doctor', result)
+        else:
+            c.execute("select * from prescription where PatientID='"+patSSN+"' and DoctorID='"+docid+"'")
+            patpres = c.fetchall()
+
+            if patpres == []:
+                result = {"pendpatient": patlist, "allpatient": patlist1, "patinfo": patinfo, "patpres": ["No Prescription Found"], "pattest": pattest}
+                return render(request, 'doctor.html', result)
+
+            else:
+                result = {"pendpatient": patlist, "allpatient": patlist1, "patinfo": patinfo, "patpres": patpres, "pattest": pattest}
+                return render(request, 'doctor.html', result)
+
+    result = {"pendpatient": patlist, "allpatient": patlist1, "patinfo": patinfo}
 
     return render(request,'doctor.html', result)
 
@@ -277,6 +307,14 @@ def dataoperator(request):
 
     return render(request,'data_operator.html', result);
 
+def errorhtml(request):
+    query = "SELECT Attachments FROM tests WHERE TestID = 2"
+    c.execute(query)
+    img = c.fetchall()
+    image_base64 = base64.b64encode(img[0][0]).decode('ascii')
+    context = {'image_data': f'data:image/png;base64,{image_base64}'}
+
+    return render(request,'error.html',context);
 
 
 
@@ -302,3 +340,4 @@ def delete_user_from_database(employee_id):
     # Execute the query and commit the changes
     c.execute(query, values)
     m.commit()
+

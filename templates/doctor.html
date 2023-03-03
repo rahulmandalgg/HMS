@@ -40,7 +40,7 @@
       }
 
       input[type="submit"] {
-        background-color: #4CAF50;
+        background-color: #0066cc;
         color: white;
         padding: 12px 20px;
         border: none;
@@ -49,7 +49,7 @@
       }
 
       input[type="submit"]:hover {
-        background-color: #45a049;
+        background-color: #0066cc;
       }
 
       table {
@@ -60,7 +60,7 @@
       }
 
       th {
-        background-color: #4CAF50;
+        background-color: #0066cc;
         color: white;
         padding: 8px;
         text-align: left;
@@ -71,6 +71,15 @@
         padding: 8px;
       }
 
+
+
+      ul.messages {
+            color: red;
+            text-align: center;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
       tr:nth-child(even) {
         background-color: #f2f2f2;
       }
@@ -90,13 +99,48 @@
     </ul>
     {% endif %}
 
-        <img src="{% static "x-ray.jpg" %}" alt="Image">
+
     <!-- Query form for patient information -->
     <label for="patient-id">Patient Information:</label>
-    <form>
-      <input type="text" id="patient-id" name="patient-id" placeholder="Enter patient ID...">
-      <input type="submit" value="Search">
+    <form method="post" id="info" >
+         <input type="hidden" name="form_type" value="info">
+        {% csrf_token %}
+      <input type="number" id="patient-id" name="patient-id" placeholder="Enter patient ID...">
+      <input type="submit" value="Search" id="btn">
     </form>
+
+    <!-- Modal for patient information -->
+    <div id="patientinfo">
+    <h2>Patient Information</h2>
+        <table>
+            {%  for dt in patinfo %}
+           <tr>
+               <td colspan="4" align="center" bgcolor="royalblue">{{dt.0}} - {{dt.1}} {{dt.2}}</td>
+           </tr>
+           {% endfor %}
+        {%  for dt in patpres %}
+           <tr>
+               <td colspan="4" align="center" > Prescription: {{dt.2}} </td>
+           </tr>
+
+           {% endfor %}
+            <tr>
+                <td >TestID </td>
+                <td > Test Date and Time </td>
+                <td > Test Description </td>
+                <td > Test Result </td>
+           </tr>
+
+        {%  for dt in pattest %}
+           <tr>
+                <td >{{dt.0}} </td>
+                <td > {{dt.2}} </td>
+                <td > {{dt.3}} </td>
+                <td > {{dt.4}} </td>
+           </tr>
+           {% endfor %}
+        </table>
+</div>
 
     <!-- Table of patients treated by doctor -->
     <h2>Patients Treated:</h2>
@@ -104,13 +148,11 @@
       <tr>
         <th>Patient ID</th>
         <th>Name</th>
-        <th>Prescription Information</th>
       </tr>
       {%  for dt in allpatient %}
            <tr>
                <td>{{dt.0}}</td>
                <td>{{dt.1}} {{dt.2}}</td>
-               <td>{{dt.3}}</td>
            </tr>
            {% endfor %}
       <!-- Repeat above row for each patient -->
@@ -133,6 +175,10 @@
            {% endfor %}
       <!-- Repeat above row for each pending appointment -->
     </table>
+
+
+
+
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

@@ -24,5 +24,6 @@ urlpatterns = [
     path('doctor/', views.doctor,name='doctor'),
     path('frontdesk/', views.frontdesk,name='frontdesk'),
     path('dataoperator/', views.dataoperator,name='dataoperator'),
+    path('error/', views.errorhtml,name='error'),
 
 ]
