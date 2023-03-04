@@ -20,9 +20,8 @@
             position: fixed;
             border-collapse: collapse;
             background-color: #f6f6f6;
+        }
 
-
-        }/* Spacing */
         td, th {
           border: 1px solid #999;
           padding: 20px;
@@ -60,6 +59,12 @@
 			padding: 20px;
 			text-align: center;
 		}
+        #detal{
+            color: White;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: start;
+        }
         button{
             size: 5px;
             border-radius: 10px;
@@ -130,7 +135,14 @@
   </head>
 
   <body>
-    <h1>ADMIN DASHBOARD <a href="/" class="btn btn-info btn-lg" style="float:right">
+
+    <h1>
+        <a id="detal">
+            {% for dt in details  %}
+            Hello {{dt.0}} {{dt.1}}
+            {% endfor %}
+        </a>
+        ADMIN DASHBOARD <a href="/" class="btn btn-info btn-lg" style="float:right">
           <span class="glyphicon glyphicon-log-out"></span> Log out
         </a>
     </h1>

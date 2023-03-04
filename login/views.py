@@ -54,10 +54,12 @@ def login(request):
 @csrf_protect
 def admin(request):
 
-    c = m.cursor()
+    c.execute("select users.First_Name, users.Last_Name from users where users.EmployeeID="+id)
+    details= c.fetchall()
+
     c.execute("select * from users")
     results = c.fetchall()
-    result = {"staff": results}
+    result = {"staff": results, "details": details}
 
     if request.method == 'POST' and request.POST.get("form_type") == 'rform':
         remove_id = request.POST.get("remove-user-id")
@@ -94,6 +96,8 @@ def admin(request):
     return render(request,'admin.html',result)
 
 def doctor(request):
+    c.execute("select users.First_Name, users.Last_Name from users where users.EmployeeID=" + id)
+    details = c.fetchall()
 
     docid = request.session['id']
     querypend = "select patient.SSN,patient.First_Name,patient.Last_Name,appointment.AppointmentDT from patient inner join appointment on patient.SSN=appointment.PatientID where appointment.DoctorID="+docid+" and appointment.AppointmentDT > now();"
@@ -142,26 +146,29 @@ def doctor(request):
         patinfo = c.fetchall()
 
         if patinfo == []:
-            result = {"pendpatient": patlist, "allpatient": patlist1, "patinfo": ["Patient Not Found"], "patpres": []}
+            result = {"pendpatient": patlist, "allpatient": patlist1, "patinfo": ["Patient Not Found"], "patpres": [], "details": details}
             return redirect(request,'doctor', result)
         else:
             c.execute("select * from prescription where PatientID='"+patSSN+"' and DoctorID='"+docid+"'")
             patpres = c.fetchall()
 
             if patpres == []:
-                result = {"pendpatient": patlist, "allpatient": patlist1, "patinfo": patinfo, "patpres": ["No Prescription Found"], "pattest": pattest, "context": context}
+                result = {"pendpatient": patlist, "allpatient": patlist1, "patinfo": patinfo, "patpres": ["No Prescription Found"], "pattest": pattest, "context": context, "details": details}
                 return render(request, 'doctor.html', result)
 
             else:
-                result = {"pendpatient": patlist, "allpatient": patlist1, "patinfo": patinfo, "patpres": patpres, "pattest": pattest, "context": context}
+                result = {"pendpatient": patlist, "allpatient": patlist1, "patinfo": patinfo, "patpres": patpres, "pattest": pattest, "context": context, "details": details}
                 return render(request, 'doctor.html', result)
 
-    result = {"pendpatient": patlist, "allpatient": patlist1, "patinfo": patinfo}
+    result = {"pendpatient": patlist, "allpatient": patlist1, "patinfo": patinfo, "details": details}
 
     return render(request,'doctor.html', result)
 
 
 def frontdesk(request):
+    c.execute("select users.First_Name, users.Last_Name from users where users.EmployeeID=" + id)
+    details = c.fetchall()
+
     c.execute("select * from patient inner join admit on patient.SSN=admit.PatientID where admit.Admit_Status=false")
     patlist = c.fetchall()
 
@@ -177,7 +184,7 @@ def frontdesk(request):
     c.execute(" select users.EmployeeID,users.First_Name,users.Last_Name,users.Specialization from users where users.type='doctor';")
     doclist = c.fetchall()
 
-    result = {"patient": patlist, "room": roomlist, "dispat": dispatlist, "doc": doclist, "allpat": allpatlist}
+    result = {"patient": patlist, "room": roomlist, "dispat": dispatlist, "doc": doclist, "allpat": allpatlist,"details": details}
 
     if request.method == 'POST' and request.POST.get("form_type") == 'regpat':
 
@@ -285,6 +292,9 @@ def frontdesk(request):
     return render(request,'front_desk.html', result);
 
 def dataoperator(request):
+    c.execute("select users.First_Name, users.Last_Name from users where users.EmployeeID=" + id)
+    details = c.fetchall()
+
     c.execute("select * from tests")
     testlist = c.fetchall()
 
@@ -295,7 +305,7 @@ def dataoperator(request):
     doclist = c.fetchall()
 
 
-    result = {'tstlist': testlist, "patient": patlist, "doctor": doclist}
+    result = {'tstlist': testlist, "patient": patlist, "doctor": doclist , "details": details}
 
     if request.method == 'POST' and request.POST.get("form_type") == 'testform':
         testid = str(request.POST.get("test-select"))
@@ -332,15 +342,6 @@ def dataoperator(request):
             messages.success(request, 'Treatment Prescribed!!!')
 
     return render(request,'data_operator.html', result);
-
-def errorhtml(request):
-    query = "SELECT Attachments FROM tests WHERE TestID = 2"
-    c.execute(query)
-    img = c.fetchall()
-    image_base64 = base64.b64encode(img[0][0]).decode('ascii')
-    context = {'image_data': f'data:image/png;base64,{image_base64}'}
-
-    return render(request,'error.html',context);
 
 
 
