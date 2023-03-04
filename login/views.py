@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseNotFound, HttpResponse
+from django.http import HttpResponseNotFound, HttpResponse, Http404
 from django.shortcuts import render,redirect
 import mysql.connector as sql
 from django.views.decorators.csrf import csrf_protect
@@ -51,8 +51,9 @@ def login(request):
     return render(request, 'login.html')
 
 
-@csrf_protect
 def admin(request):
+    if not get_referer(request):
+        return redirect('error')
 
     c.execute("select users.First_Name, users.Last_Name from users where users.EmployeeID="+id)
     details= c.fetchall()
@@ -96,6 +97,8 @@ def admin(request):
     return render(request,'admin.html',result)
 
 def doctor(request):
+    if not get_referer(request):
+        return redirect('error')
     c.execute("select users.First_Name, users.Last_Name from users where users.EmployeeID=" + id)
     details = c.fetchall()
 
@@ -166,6 +169,8 @@ def doctor(request):
 
 
 def frontdesk(request):
+    if not get_referer(request):
+        return redirect('error')
     c.execute("select users.First_Name, users.Last_Name from users where users.EmployeeID=" + id)
     details = c.fetchall()
 
@@ -292,6 +297,8 @@ def frontdesk(request):
     return render(request,'front_desk.html', result);
 
 def dataoperator(request):
+    if not get_referer(request):
+        return redirect('error')
     c.execute("select users.First_Name, users.Last_Name from users where users.EmployeeID=" + id)
     details = c.fetchall()
 
@@ -368,3 +375,11 @@ def delete_user_from_database(employee_id):
     c.execute(query, values)
     m.commit()
 
+def error(request):
+    return render(request, 'error.html')
+
+def get_referer(request):
+    referer = request.META.get('HTTP_REFERER')
+    if not referer:
+        return None
+    return referer
