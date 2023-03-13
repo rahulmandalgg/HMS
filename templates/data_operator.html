@@ -9,21 +9,44 @@
 
 	<title>Test and Result Input Form</title>
 	<style type="text/css">
-          h1 {
-			background-color: #0066cc;
+           h1 {
+               font-family: "Bell MT";
+			background: linear-gradient(to right, #ff105f, #133d60);
 			color: #fff;
 			margin: 0;
 			padding: 20px;
 			text-align: center;
 		}
+
 		body {
-			font-family: Arial, sans-serif;
+			font-family: "Calibri Light";
 			font-size: 14px;
+			background-image: url("https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2072&q=80");
+			background-size: 100%;
+			background-repeat: no-repeat;
+			background-attachment: fixed;
+			background-position: center;
 		}
-		.container {
-			max-width: 800px;
+		.container1  {
+
+            opacity: 0.8;
+			height: auto;
+			width: 800px;
 			margin: 0 auto;
 			padding: 20px;
+            color: white;
+			background-color: rgb(255, 255, 255);
+            background-image: url(https://htmlcolorcodes.com/assets/images/html-color-codes-color-tutorials-hero.jpg);
+		}
+        .container2  {
+            opacity: 0.8;
+			height: auto;
+			width: 800px;
+			margin: 0 auto;
+			padding: 20px;
+            color: white;
+			background-color: rgb(255, 255, 255);
+            background-image: url(https://htmlcolorcodes.com/assets/images/html-color-codes-color-tutorials-hero.jpg);
 		}
 		.form-group {
 			margin-bottom: 10px;
@@ -55,15 +78,17 @@
 		}
 		.button {
 			padding: 10px 20px;
-			background-color: #007bff;
+			/* background-color: #007bff; */
+			background: linear-gradient(to right, #ff105f, #ffad06);
 			color: #fff;
 			border: none;
-			border-radius: 3px;
+			border-radius: 30px;
 			cursor: pointer;
 			font-size: 14px;
 		}
         ul.messages {
-            color: red;
+            font-size: 30px;
+            color: RED;
             text-align: center;
             list-style: none;
             margin: 0;
@@ -83,30 +108,11 @@
             color: White;
             font-size: 20px;
             font-weight: bold;
-            text-align: start;
+            float: left;
         }
 
 	</style>
-	<script type="text/javascript">
 
-        var tstlist = {{tstlist|safe}};
-
-		function showPatientInfo() {
-			var select = document.getElementById("test-select");
-			var patientInfo = document.getElementById("patient-info");
-			var patientName = document.getElementById("patient-name");
-			var patientGender = document.getElementById("patient-gender");
-			var selectedTest = select.options[select.selectedIndex].value;
-			if (selectedTest === "") {
-				patientInfo.style.display = "none";
-			} else {
-
-                patientInfo.style.display = "block";
-            }
-
-
-		}
-	</script>
     <script type="text/javascript">
 		function showTreatmentForm() {
 			var select = document.getElementById("patient-select");
@@ -125,7 +131,7 @@
 <h1>
     <a id="detal">
             {% for dt in details  %}
-            Hello {{dt.0}} {{dt.1}}
+            Hello, <br> {{dt.0}} {{dt.1}}
             {% endfor %}
         </a>
     Data Operator Dashboard
@@ -140,7 +146,7 @@
         {% endfor %}
     </ul>
     {% endif %}
-	<div class="container">
+	<div class="container1">
 		<h2>Test and Result Input Form</h2>
 		<form method="post" id="testform" enctype="multipart/form-data">
         {% csrf_token %}
@@ -171,7 +177,7 @@
     </form>
     </div>
 
-<div class="container">
+<div class="container2">
 		<h2>Patient Treatment Input Form</h2>
 		<form method="post" id="treatform" enctype="multipart/form-data">
         {% csrf_token %}

@@ -82,9 +82,9 @@ WSGI_APPLICATION = 'HMS.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'hospital',
+        'NAME': 'testdb',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': 'mandal.1234',
         'HOST': 'localhost',
         'PORT': '3306',
         'OPTIONS': {

@@ -16,16 +16,30 @@
         padding: 0;
       }
       body {
-        font-family: Arial, sans-serif;
+        font-family: "Calibri Light";
+        background-image: url("https://c8.alamy.com/comp/PAFHMD/help-desk-operators-PAFHMD.jpg");
+
+        background-size: 100%;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
       }
       h1 {
-			background-color: #0066cc;
-			color: #fff;
+            background: linear-gradient(to right, #a8ebfc, #c9d1ff);
+			color: black;
 			margin: 0;
 			padding: 20px;
 			text-align: center;
+          font-family: "Bell MT";
 		}
+    ul.messages {
 
+            font-size: 30px;
+            color: orangered;
+            text-align: center;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
     div{
 
         margin: 10px;
@@ -54,9 +68,10 @@
       #appointments,
       #tests {
         width: 50%;
+        margin: 20px 400px;
         margin-bottom: 20px;
         padding: 20px;
-        background-color: #e6e6e6;
+        background-color: #fafaaceb  ;
       }
       #register h2,
       #admit h2,
@@ -97,8 +112,7 @@
       #discharge button,
       #appointments button,
       #tests button {
-        background-color: #008CBA;
-        color: #fff;
+        background: linear-gradient(to right, #ff105f, #ffad06);
         border: none;
         border-radius: 4px;
         font-size: 16px;
@@ -114,10 +128,10 @@
         }
       }
          #detal{
-            color: White;
+            color: black;
             font-size: 20px;
             font-weight: bold;
-            text-align: start;
+            float: left;
         }
 	</style>
 </head>
@@ -125,7 +139,7 @@
 	<h1>
         <a id="detal">
             {% for dt in details  %}
-            Hello {{dt.0}} {{dt.1}}
+            Hello, <br> {{dt.0}} {{dt.1}}
             {% endfor %}
         </a>
         Front Desk Operator Dashboard <a href="/" class="btn btn-info btn-lg" style="float:right">
@@ -231,7 +245,7 @@
 		<label for="test">Test Name and Description:</label>
 		<input type="text" id="test" name="test" height="50px" >
 		<label for="date">Date:</label>
-		<input type="date" id="date" name="date">
+		<input type="date" id="date1" name="date">
 		<label for="time">Time:</label>
 		<input type="time" id="time" name="time">
 		<label for="patient">Patient:</label>
@@ -249,6 +263,15 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-
+<script>
+    $(document).ready(function () {
+    var today = new Date().toISOString().split('T')[0];
+    $("#date").attr('min', today);
+    });
+    $(document).ready(function () {
+    var today = new Date().toISOString().split('T')[0];
+    $("#date1").attr('min', today);
+    });
+</script>
 </body>
 </html>

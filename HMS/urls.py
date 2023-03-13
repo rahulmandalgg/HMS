@@ -17,6 +17,9 @@ from django.contrib import admin
 from django.urls import path
 from login.views import login,admin,doctor,frontdesk,dataoperator
 from login import views
+from django.views.generic import RedirectView
+from django.contrib.staticfiles.storage import staticfiles_storage
+
 
 urlpatterns = [
     path('', login),
@@ -25,5 +28,6 @@ urlpatterns = [
     path('frontdesk/', views.frontdesk,name='frontdesk'),
     path('dataoperator/', views.dataoperator,name='dataoperator'),
     path('error/', views.error,name='error'),
+    path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('favicon.ico'))),
 
 ]

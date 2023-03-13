@@ -13,16 +13,28 @@
     <style>
       /* Inline CSS styling */
       body {
-        font-family: Arial, sans-serif;
+        font-family: "Calibri Light";
+        background-color: #f7f3c1;
+          background-image: url("/static/p1.jpg");
+          background-size: cover;
       }
 
       h1 {
-			background-color: #0066cc;
-			color: #fff;
+        background: linear-gradient(to right, #81f2f2, #87bbec);
+			color: black;
 			margin: 0;
 			padding: 20px;
 			text-align: center;
+            font-family: "Bell MT";
 		}
+    h2{
+      height : 50px;
+        width: 30%;
+        background: linear-gradient(to right, #ddcfd4, #f0d59b);
+        margin-left: 25%;
+        border-radius: 8px;
+        text-align: center;
+    }
 
       label {
         font-weight: bold;
@@ -48,6 +60,7 @@
         cursor: pointer;
       }
 
+
       input[type="submit"]:hover {
         background-color: #0066cc;
       }
@@ -55,10 +68,15 @@
       table {
         font-family: Arial, sans-serif;
         border-collapse: collapse;
-        width: 100%;
+        width: 50%;
         margin-top: 20px;
+        margin-left: 25%;
       }
 
+      #info{
+        margin-left: 25%;
+        margin-top: 20px;
+      }
       th {
         background-color: #0066cc;
         color: white;
@@ -83,11 +101,16 @@
       tr:nth-child(even) {
         background-color: #f2f2f2;
       }
+      tr:nth-child(odd)
+      {
+        background-color: #f2f2f2;
+      }
+
       #detal{
-            color: White;
+            color: rgb(18, 17, 17);
             font-size: 20px;
             font-weight: bold;
-            text-align: start;
+            float: left;
         }
     </style>
   </head>
@@ -96,7 +119,7 @@
     <h1>
         <a id="detal">
             {% for dt in details  %}
-            Hello {{dt.0}} {{dt.1}}
+            Hello, <br> {{dt.0}} {{dt.1}}
             {% endfor %}
         </a>
         Doctor Dashboard
@@ -112,10 +135,11 @@
     </ul>
     {% endif %}
 
-
+<hr>
     <!-- Query form for patient information -->
-    <label for="patient-id">Patient Information:</label>
+
     <form method="post" id="info" >
+        <label for="patient-id">Patient Information:</label>
          <input type="hidden" name="form_type" value="info">
         {% csrf_token %}
       <input type="number" id="patient-id" name="patient-id" placeholder="Enter patient ID...">
@@ -138,11 +162,11 @@
 
            {% endfor %}
             <tr>
-                <td >TestID </td>
-                <td > Test Date and Time </td>
-                <td > Test Description </td>
-                <td > Test Result </td>
-                <td > Attachments </td>
+                <th >TestID </th>
+                <th > Test Date and Time </th>
+                <th > Test Description </th>
+                <th > Test Result </th>
+                <th > Attachments </th>
            </tr>
 
         {%  for dt in pattest %}
@@ -163,7 +187,7 @@
            {% endfor %}
         </table>
 </div>
-
+<hr>
     <!-- Table of patients treated by doctor -->
     <h2>Patients Treated:</h2>
     <table>
@@ -179,7 +203,7 @@
            {% endfor %}
       <!-- Repeat above row for each patient -->
     </table>
-
+<hr>
     <!-- Table of pending appointments of doctor -->
     <h2>Pending Appointments:</h2>
     <table>

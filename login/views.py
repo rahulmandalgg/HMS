@@ -14,7 +14,7 @@ id=''
 pas=''
 usrtype= ''
 
-m=sql.connect(host="localhost",user="root",passwd="",database="hospital")
+m=sql.connect(host="localhost",user="root",passwd="mandal.1234",database="testdb")
 c=m.cursor()
 
 def login(request):
@@ -67,6 +67,14 @@ def admin(request):
         if remove_id == '':
             messages.error(request, 'Please fill all the fields!')
             return redirect('admin')
+
+        # Check if user exists
+        c.execute("select * from users where EmployeeID='"+remove_id+"'")
+        data = c.fetchall()
+        if len(data) == 0:
+            messages.error(request, 'User does not exist!')
+            return redirect('admin')
+
         c.execute("delete from users where EmployeeID='"+remove_id+"'")
         m.commit()
         messages.success(request, 'User removed successfully!')
@@ -81,6 +89,13 @@ def admin(request):
 
         if employee_id == '' or password == '' or first_name == '' or last_name == '' or user_type == '':
             messages.error(request, 'Please fill all the fields!')
+            return redirect('admin')
+
+        # Check if user already exists
+        c.execute("select * from users where EmployeeID='"+employee_id+"'")
+        data = c.fetchall()
+        if len(data) > 0:
+            messages.error(request, 'User already exists!')
             return redirect('admin')
 
         if user_type == 'doctor':
@@ -118,6 +133,14 @@ def doctor(request):
         if patSSN == '':
             messages.error(request, 'Please fill Patient ID!')
             return redirect('doctor')
+
+        # Check if patient exists
+        c.execute("select * from patient where SSN='"+patSSN+"'")
+        data = c.fetchall()
+        if len(data) == 0:
+            messages.error(request, 'Patient does not exist!')
+            return redirect('doctor')
+
         testquery = "select * from tests where tests.PatientID="+patSSN+";"
         c.execute(testquery)
         pattest = c.fetchall()
@@ -203,6 +226,12 @@ def frontdesk(request):
             messages.error(request, 'Please fill all the fields!')
             return redirect('frontdesk')
         else:
+            #check if patient already exists
+            c.execute("select * from patient where SSN='"+patSSN+"'")
+            data = c.fetchall()
+            if len(data) != 0:
+                messages.error(request, 'Patient already exists!')
+                return redirect('frontdesk')
             c.execute("insert into patient values('"+patSSN+"','"+pfName+"','"+plName+"','"+pDOB+"','"+pgender+"')")
             m.commit()
             query = """INSERT INTO admit (PatientID, Admit_Status) VALUES (%s,%s)"""
@@ -287,6 +316,13 @@ def frontdesk(request):
             return redirect('frontdesk')
 
         else:
+            #check if test already exists
+            c.execute("select * from tests where TestID='"+testid+"'")
+            data = c.fetchall()
+            if len(data) != 0:
+                messages.error(request, 'Test already exists!')
+                return redirect('frontdesk')
+            
             query = """INSERT INTO tests (TestID,PatientID, TestDT, TestDesc) VALUES (%s,%s, %s, %s)"""
             values = (testid,patid, testdt, testnd)
             c.execute(query, values)
