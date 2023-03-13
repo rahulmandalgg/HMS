@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+	<title>Test and Result Input Form</title>
+	<style type="text/css">
+           h1 {
+			background: linear-gradient(to right, #ff105f, #133d60);
+			color: #fff;
+			margin: 0;
+			padding: 20px;
+			text-align: center;
+		}
+		h2{
+			background: linear-gradient(to right, #ff105f, #ffad06);
+			
+		}
+		body {
+			font-family: Arial, sans-serif;
+			font-size: 14px;
+			background-image: url("https://www.shutterstock.com/image-vector/hud-vector-infographics-futuristic-interface-260nw-790050997.jpg");
+			background-size: 100%;
+			background-repeat: no-repeat;
+			background-attachment: fixed;
+			background-position: center;
+		}
+		.container {
+			height: 300px;
+			width: 440px;
+			margin: 0 auto;
+			padding: 20px;
+			background-color: rgb(255, 255, 255);
+		}
+		.form-group {
+			margin-bottom: 10px;
+		}
+		.label {
+			display: block;
+			margin-bottom: 5px;
+			font-weight: bold;
+		}
+		.input {
+			padding: 5px;
+			border: 1px solid #ccc;
+			border-radius: 3px;
+			width: 100%;
+			box-sizing: border-box;
+			font-size: 14px;
+		}
+		.select {
+			padding: 5px;
+			border: 1px solid #ccc;
+			border-radius: 3px;
+			box-sizing: border-box;
+			font-size: 14px;
+			width: 100%;
+			height: 35px;
+		}
+		.attachment {
+			margin-top: 10px;
+		}
+		.button {
+			padding: 10px 20px;
+			/* background-color: #007bff; */
+			background: linear-gradient(to right, #ff105f, #ffad06);
+			color: #fff;
+			border: none;
+			border-radius: 30px;
+			cursor: pointer;
+			font-size: 14px;
+		}
+        ul.messages {
+            color: red;
+            text-align: center;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+		.patient-info {
+			display: none;
+			padding: 10px;
+			border: 1px solid #ccc;
+			border-radius: 3px;
+			margin-top: 10px;
+		}
+		.patient-info h2 {
+			margin-top: 0;
+		}
+        #detal{
+            color: White;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: start;
+        }
+
+	</style>
+	<script type="text/javascript">
+
+        var tstlist = {{tstlist|safe}};
+
+		function showPatientInfo() {
+			var select = document.getElementById("test-select");
+			var patientInfo = document.getElementById("patient-info");
+			var patientName = document.getElementById("patient-name");
+			var patientGender = document.getElementById("patient-gender");
+			var selectedTest = select.options[select.selectedIndex].value;
+			if (selectedTest === "") {
+				patientInfo.style.display = "none";
+			} else {
+
+                patientInfo.style.display = "block";
+            }
+
+
+		}
+	</script>
+    <script type="text/javascript">
+		function showTreatmentForm() {
+			var select = document.getElementById("patient-select");
+			var treatmentForm = document.getElementById("treatment-form");
+			if (select.options[select.selectedIndex].value === "") {
+				treatmentForm.style.display = "none";
+			} else {
+
+				treatmentForm.style.display = "block";
+
+			}
+		}
+	</script>
+</head>
+<body>
+<h1>
+    <a id="detal">
+            {% for dt in details  %}
+            Hello {{dt.0}} {{dt.1}}
+            {% endfor %}
+        </a>
+    Data Operator Dashboard
+    <a href="/" class="btn btn-info btn-lg" style="float:right">
+          <span class="glyphicon glyphicon-log-out"></span> Log out
+        </a>
+</h1>
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+	<div class="container">
+		<h2>Test and Result Input Form</h2>
+		<form method="post" id="testform" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="form_type" value="testform">
+			<div class="form-group">
+				<label for="test-select" class="label">Select Test:</label>
+        <select id="test-select" onchange="showPatientInfo()" name="test-select">
+        <option value="">--Select Test--</option>
+        {%  for dt in tstlist %}
+            <option value="{{dt.0}}" >TestID:{{dt.0}} , PatientID-{{dt.1}} , Test Description: {{dt.3}}</option>
+        {% endfor %}
+        </select>
+        </div>
+        <div id="patient-info" class="patient-info">
+        <h2>Patient Information</h2>
+        <p><strong>Name:</strong> <span id="patient-name"></span></p>
+        <p><strong>Gender:</strong> <span id="patient-gender"></span></p>
+        </div>
+    <div class="form-group">
+    <label for="result-input" class="label">Input Test Result:</label>
+    <input type="text" id="result-input" name="result-input" class="input" placeholder="Enter test result...">
+    </div>
+    <div class="form-group attachment">
+    <label for="attachment-input" class="label" >Attach Image:</label>
+    <input type="file" id="attachment-input" name="attachment-input">
+    </div>
+    <button type="submit" class="button">Submit</button>
+    </form>
+    </div>
+
+<div class="container">
+		<h2>Patient Treatment Input Form</h2>
+		<form method="post" id="treatform" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="form_type" value="treatform">
+			<div id="testresult-form" class="form-group">
+				<label for="patient-select" class="label">Select Patient:</label>
+                <select id="patient-select" onchange="showTreatmentForm()" name="patient-select">
+				<option value="">--Select Patient--</option>
+                {%  for dt in patient %}
+                    <option value="{{dt.0}}" > {{dt.0}} - {{dt.1}} {{dt.2}}</option>
+                {% endfor %}
+			</select>
+
+            <select id="doctor-select"  name="doctor-select">
+				<option value="">--Select-Doctor--</option>
+                {%  for dt in doctor %}
+                    <option value="{{dt.0}}" > {{dt.0}} - {{dt.1}} {{dt.2}} - {{ dt.3}}</option>
+                {% endfor %}
+			</select>
+		</div>
+		<div id="treatment-form" style="display: none;">
+			<h2>Treatment Prescription Information <span id="selected-patient"></span></h2>
+			<div class="form-group">
+				<label for="treatment-input" class="label">Input Treatment:</label>
+				<textarea id="treatment-input" name="treatment-input" class="input" placeholder="Enter treatment..."></textarea>
+			</div>
+			<button type="submit" class="button">Submit</button>
+		</div>
+	</form>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+</body>
+</html>
